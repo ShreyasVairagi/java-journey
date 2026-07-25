@@ -3,12 +3,11 @@ import java.util.Scanner;
 
 public class ExpenseTracker {
 
-    static ArrayList<String> expenses = new ArrayList<>();
-    static ArrayList<Double> amounts = new ArrayList<>();
-    static Scanner scannerObj = new Scanner(System.in);
-    static int selection = 2;
+    ArrayList<Expense> expenses = new ArrayList<>();
+    Scanner scannerObj = new Scanner(System.in);
+    int selection = 2;
 
-    public static void menu() {
+    public void menu() {
 
         System.out.println(
                 "===== Expense Tracker =====\n" +
@@ -16,7 +15,8 @@ public class ExpenseTracker {
                         "1. Add Expense\n" +
                         "2. View Expenses\n" +
                         "3. Show Total\n" +
-                        "4. Exit\n"+
+                        "4. Delete Expense\n"+
+                        "5. Exit\n"+
                         "\n" +
                         "Choose option "
         );
@@ -24,50 +24,100 @@ public class ExpenseTracker {
         selection = Integer.parseInt(input);
 
     }
-    public static void addExpense(String name, double cost){
-        expenses.add(name);
-        amounts.add(cost);
-    }
-    public static void viewExpenses(){
-        for (int i = 0; i < expenses.size(); i++){
-            System.out.println(expenses.get(i) + " " + amounts.get(i) + "\n");
+
+    public class Expense {
+        protected String name;
+        protected double cost;
+
+        public Expense(String inputName, double inputCost) {
+            this.name  = inputName;
+            this.cost = inputCost;
+        }
+        public String toString() {
+            return name + " " + cost;
         }
     }
 
-    public static double calculateTotal(){
+    public void addExpense(String name, double cost){
+        Expense myNewExpense = new Expense(name, cost);
+        expenses.add(myNewExpense);
+    }
+    public void viewExpenses(){
+        for (int i = 0; i < expenses.size(); i++){
+            System.out.println(expenses.get(i) + "\n");
+        }
+    }
+
+    public double calculateTotal(){
         double result = 0.0;
-        for (int i = 0; i < amounts.size(); i++){
-            result += amounts.get(i);
+        for (int i = 0; i < expenses.size(); i++){
+            result += expenses.get(i).cost;
         }
         return result;
     }
 
+    public void deleteExpense(){
+        if (expenses.isEmpty()){
+            System.out.println("There is nothing to delete");
+        }
+        System.out.println("Select what u wanna delete");
+        for(int i =0; i < expenses.size(); i++){
+            System.out.println((i+1) + "." + expenses.get(i) + "\n");
+        }
+        int selection = 0;
+        boolean validInput = false;
+        while (!validInput){
+            String userInput = scannerObj.nextLine();
+            try {
+                selection = Integer.parseInt(userInput);
 
+                if (selection >= 1 && selection <= expenses.size()){
+                    validInput = true;
+                }else{
+                    System.out.println("Please enter a number between 1 and" + expenses.size() + ":");
+                }
+            }catch (NumberFormatException e){
+                System.out.println("Invalid input! Please enter a valid number:");
+            }
+        }
 
-
+        expenses.remove(selection - 1);
+    }
 
     public static void main(String[] args) {
-        while (selection != 4){
-            menu();
-            switch(selection){
+        ExpenseTracker tracker = new ExpenseTracker();
+        while (tracker.selection != 5){
+            tracker.menu();
+            switch(tracker.selection){
                 case 1:
                     String name = "";
                     double cost = 0.0;
+
                     System.out.println("Add the name of the item: ");
-                    name =  scannerObj.nextLine();
-                    System.out.println("Add the cost of the item: ");
-                    String costInput = scannerObj.nextLine();
-                    cost = Double.parseDouble(costInput);
-                    addExpense(name , cost);
+                    name =  tracker.scannerObj.nextLine();
+                    boolean validInput = false;
+                    while (!validInput) {
+                        System.out.println("Add the cost of the item: ");
+                        String costInput = tracker.scannerObj.nextLine();
+                        try {
+                            cost = Double.parseDouble(costInput);
+                            validInput = true;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input! Please enter a valid number (e.g., 10.50).");
+                        }
+                    }
+                    tracker.addExpense(name , cost);
                     break;
                 case 2:
-                    viewExpenses();
+                    tracker.viewExpenses();
                     break;
                 case 3:
-                    System.out.println(calculateTotal());
-
+                    System.out.println("Total Expenses: " + tracker.calculateTotal());
                     break;
                 case 4:
+                    tracker.deleteExpense();
+                    break;
+                case 5:
                     break;
             }
         }
