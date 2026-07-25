@@ -1,0 +1,6 @@
+A simple program where a user can:
+
+Add an expense
+View all expenses
+Calculate total spending
+Exit
