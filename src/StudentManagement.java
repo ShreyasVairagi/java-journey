@@ -6,22 +6,24 @@ class Student{
     String firstname;
     String lastname;
     int age;
-    String Course;
+    String course;
     String email;
     int marks;
 
-    void Println(){
+    void printInfo(){
         System.out.println("Student Id: " + this.studentId + "\n" +
                             "Name: " + this.firstname +  this.lastname + "\n" +
                             "Age: " + this.age + "\n"+
-                            "email: " + this.email);
+                            "email: " + this.email + "\n"+
+                            "Course: " + this.course + "\n" + "\n");
     }
+
 }
 
 public class StudentManagement {
     Scanner userInput = new Scanner(System.in);
     ArrayList<Student> Students = new ArrayList<Student>();
-    Student indiStudents = new Student();
+
     int choice;
 
     public void menu(){
@@ -45,13 +47,13 @@ public class StudentManagement {
     }
 
     public void addStudent(){
-
+        Student indiStudents = new Student();
         int randomId = (int)(Math.random() * 101);
-        for (int i = 0; i < Students.size();i++){
+        for (int i = 0; i <= Students.size();i++){
             if(indiStudents.studentId == randomId){
                 randomId = (int) (Math.random() * 101);
             }
-        }
+        } // needs solving
         indiStudents.studentId = randomId;
         System.out.println("Enter Student First Name:");
         indiStudents.firstname = userInput.nextLine();
@@ -61,27 +63,47 @@ public class StudentManagement {
         String age = userInput.nextLine();
         indiStudents.age = Integer.parseInt(age);
         System.out.println("Enter Student Course:");
-        indiStudents.Course = userInput.nextLine();
+        indiStudents.course = userInput.nextLine();
         System.out.println("Enter Student Email:");
         indiStudents.email = userInput.nextLine();
         System.out.println("Enter Student Mark:");
         String mark = userInput.nextLine();
         indiStudents.marks = Integer.parseInt(mark);
 
+        Students.add(indiStudents);
+    }
+    public void viewStudents(){
+        for (int i = 0; i < Students.size(); i++){
+            Student s = Students.get(i);
+            s.printInfo();
+        }
+    }
+
+    void searchStudent(String name){
+        for (int i = 0;i < Students.size(); i++){
+            if (Students.get(i).firstname.equals(name)){
+                Student s = Students.get(i);
+                s.printInfo();
+            }
+        }
     }
 
     public static void main(String[] arg){
         StudentManagement students = new StudentManagement();
-        while(students.choice != 3){
+        while(students.choice != 4){
             students.menu();
             switch (students.choice){
                 case 1:
                     students.addStudent();
                     break;
                 case 2:
-                    students.indiStudents.Println();
+                    students.viewStudents();
                     break;
                 case 3:
+                    String name = students.userInput.nextLine();
+                    students.searchStudent(name);
+                    break;
+                case 4:
                     break;
             }
         }
