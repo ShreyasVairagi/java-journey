@@ -81,15 +81,65 @@ public class StudentManagement {
     public void viewStudents(){
         for (Student i : Students){
             i.printInfo();
+            break;
         }
     }
 
-    void searchStudent(String name){
+    void searchStudent(int id){
         for (Student i : Students){
-            if(i.firstname.equals(name)){
+            if(i.studentId == id){
                 i.printInfo();
+                break;
+            }else {
+                System.out.println("Incorrect ID");
+                menu();
             }
         }
+    }
+
+    void updateStudentInfo(int id){
+        for (Student i : Students){
+            if(i.studentId == id) {
+                i.printInfo();
+                String userWrite = scannerObj.nextLine();
+                int userSelect = Integer.parseInt(userWrite);
+
+                switch (userSelect){
+                    case 1:
+                        System.out.println("Enter Student's new Name: ");
+                        i.firstname = scannerObj.nextLine();
+                        break;
+                    case 2:
+                        System.out.println("Enter Student's new Surname: ");
+                        i.lastname = scannerObj.nextLine();
+                        break;
+                    case 3:
+                        System.out.println("Enter Student's new Age: ");
+                        String entersAge = scannerObj.nextLine();
+                        i.age = Integer.parseInt(entersAge);
+                        break;
+                    case 4:
+                        System.out.println("Enter Student's new course: ");
+                        i.course = scannerObj.nextLine();
+                        break;
+                    case 5:
+                        System.out.println("Enter Student's new Email: ");
+                        i.email = scannerObj.nextLine();
+                        break;
+                    case 6:
+                        System.out.println("Enter Student's new Marks: ");
+                        String entersMarks = scannerObj.nextLine();
+                        i.marks = Integer.parseInt(entersMarks);
+                        break;
+                    default:
+                        System.out.println("Select a number given above");
+                }
+            }else {
+                System.out.println("Incorrect ID");
+                menu();
+            }
+        }
+
     }
 
     public static void main(String[] arg){
@@ -104,8 +154,9 @@ public class StudentManagement {
                     students.viewStudents();
                     break;
                 case 3:
-                    String name = students.scannerObj.nextLine();
-                    students.searchStudent(name);
+                    String idInput = students.scannerObj.nextLine();
+                    int id = Integer.parseInt(idInput);
+                    students.searchStudent(id);
                     break;
                 case 4:
                     break;
