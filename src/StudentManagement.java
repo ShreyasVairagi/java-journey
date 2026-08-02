@@ -21,7 +21,7 @@ class Student{
 }
 
 public class StudentManagement {
-    Scanner userInput = new Scanner(System.in);
+    Scanner scannerObj = new Scanner(System.in);
     ArrayList<Student> Students = new ArrayList<Student>();
 
     int choice;
@@ -42,48 +42,52 @@ public class StudentManagement {
                 "9. Exit");
 
         System.out.println("Enter choice:");
-        String selection = userInput.nextLine();
+        String selection = scannerObj.nextLine();
         choice = Integer.parseInt(selection);
     }
 
     public void addStudent(){
-        Student indiStudents = new Student();
-        int randomId = (int)(Math.random() * 101);
-        for (int i = 0; i <= Students.size();i++){
-            if(indiStudents.studentId == randomId){
-                randomId = (int) (Math.random() * 101);
-            }
-        } // needs solving
-        indiStudents.studentId = randomId;
-        System.out.println("Enter Student First Name:");
-        indiStudents.firstname = userInput.nextLine();
-        System.out.println("Enter Student Last Name:");
-        indiStudents.lastname = userInput.nextLine();
-        System.out.println("Enter Student Age:");
-        String age = userInput.nextLine();
-        indiStudents.age = Integer.parseInt(age);
-        System.out.println("Enter Student Course:");
-        indiStudents.course = userInput.nextLine();
-        System.out.println("Enter Student Email:");
-        indiStudents.email = userInput.nextLine();
-        System.out.println("Enter Student Mark:");
-        String mark = userInput.nextLine();
-        indiStudents.marks = Integer.parseInt(mark);
+        Student studentObj = new Student();
 
-        Students.add(indiStudents);
+        boolean idExists = true;
+        int randomId = 0;
+        while (idExists){
+            randomId = (int)(Math.random() * 101);
+            idExists = false;
+            for (Student i : Students){
+                if (i.studentId == randomId){
+                    idExists = true;
+                }
+            }
+        }
+        studentObj.studentId = randomId;
+        System.out.println("Enter Student First Name:");
+        studentObj.firstname = scannerObj.nextLine();
+        System.out.println("Enter Student Last Name:");
+        studentObj.lastname = scannerObj.nextLine();
+        System.out.println("Enter Student Age:");
+        String age = scannerObj.nextLine();
+        studentObj.age = Integer.parseInt(age); // add try catch
+        System.out.println("Enter Student Course:");
+        studentObj.course = scannerObj.nextLine();
+        System.out.println("Enter Student Email:");
+        studentObj.email = scannerObj.nextLine();
+        System.out.println("Enter Student Mark:");
+        String mark = scannerObj.nextLine();
+        studentObj.marks = Integer.parseInt(mark);
+
+        Students.add(studentObj);
     }
     public void viewStudents(){
-        for (int i = 0; i < Students.size(); i++){
-            Student s = Students.get(i);
-            s.printInfo();
+        for (Student i : Students){
+            i.printInfo();
         }
     }
 
     void searchStudent(String name){
-        for (int i = 0;i < Students.size(); i++){
-            if (Students.get(i).firstname.equals(name)){
-                Student s = Students.get(i);
-                s.printInfo();
+        for (Student i : Students){
+            if(i.firstname.equals(name)){
+                i.printInfo();
             }
         }
     }
@@ -100,7 +104,7 @@ public class StudentManagement {
                     students.viewStudents();
                     break;
                 case 3:
-                    String name = students.userInput.nextLine();
+                    String name = students.scannerObj.nextLine();
                     students.searchStudent(name);
                     break;
                 case 4:
