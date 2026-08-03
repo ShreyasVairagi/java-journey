@@ -1,22 +1,130 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Scanner;
 
+class Subject{
+    public String subjectName;
+    private int marks;
+
+    public Subject(String subjectName, int marks) {
+        this.subjectName = subjectName;
+        this.marks = marks;
+    }
+
+    public int getMarks() {
+        return marks;
+    }
+
+    public void setMarks(int marks) {
+        this.marks = marks;
+    }
+
+    public void printMarks(){
+        System.out.println(this.subjectName);
+        System.out.println(this.marks);
+    }
+
+
+}
+
 class Student{
-    int studentId;
-    String firstname;
-    String lastname;
-    int age;
-    String course;
-    String email;
-    int marks;
+    private int studentId;
+    private String firstname;
+    private String lastname;
+    private int age;
+    private String course;
+    private String email;
+    ArrayList<Subject> subjects = new ArrayList<Subject>();
+
+    public Student(int studentId, String firstname, String lastname, int age, String course, String email) {
+        this.studentId = studentId;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.age = age;
+        this.course = course;
+        this.email = email;
+    }
+
+    public int getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getCourse() {
+        return course;
+    }
+
+    public void setCourse(String course) {
+        this.course = course;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public  void addMark(String sbjName, int mark){
+        Subject subject = new Subject(sbjName,mark);
+        subjects.add(subject);
+    }
+
+    public void printSubjects(){
+        for(Subject i : subjects){
+            System.out.println(i.subjectName + ": " + i.getMarks());
+        }
+    }
+
+    public float printAverage(){
+        float average = 0.0f;
+        for(Subject i : subjects){
+            average += i.getMarks();
+        }
+        return average/subjects.size();
+    }
+
+
+
 
     void printInfo(){
-        System.out.println("Student Id: " + this.studentId + "\n" +
-                            "Name: " + this.firstname +  this.lastname + "\n" +
-                            "Age: " + this.age + "\n"+
-                            "email: " + this.email + "\n"+
-                            "Course: " + this.course + "\n" + "\n");
+        System.out.println("1. Student Id: " + this.studentId + "\n" +
+                            "2. Firstname: " + this.firstname +   "\n" +
+                            "3. Lastname: "  +  this.lastname + "\n" +
+                            "4. Age: " + this.age + "\n"+
+                            "5. email: " + this.email + "\n"+
+                            "6. Course: " + this.course + "\n" +
+                            "\n");
     }
+
 
 }
 
@@ -38,7 +146,7 @@ public class StudentManagement {
                 "5. Delete Student\n" +
                 "6. Add Marks\n" +
                 "7. View Student Report\n" +
-                "8. Class Statistics\n" +
+                "8. Short Students\n" +
                 "9. Exit");
 
         System.out.println("Enter choice:");
@@ -47,104 +155,199 @@ public class StudentManagement {
     }
 
     public void addStudent(){
-        Student studentObj = new Student();
-
         boolean idExists = true;
         int randomId = 0;
         while (idExists){
             randomId = (int)(Math.random() * 101);
             idExists = false;
             for (Student i : Students){
-                if (i.studentId == randomId){
+                if (i.getStudentId() == randomId){
                     idExists = true;
                 }
             }
         }
-        studentObj.studentId = randomId;
+        int id = randomId;
         System.out.println("Enter Student First Name:");
-        studentObj.firstname = scannerObj.nextLine();
+        String firstname = scannerObj.nextLine();
         System.out.println("Enter Student Last Name:");
-        studentObj.lastname = scannerObj.nextLine();
+        String lastname = scannerObj.nextLine();
         System.out.println("Enter Student Age:");
-        String age = scannerObj.nextLine();
-        studentObj.age = Integer.parseInt(age); // add try catch
+        String entersAge = scannerObj.nextLine();
+        int age = Integer.parseInt(entersAge); // add try catch
         System.out.println("Enter Student Course:");
-        studentObj.course = scannerObj.nextLine();
+        String course = scannerObj.nextLine();
         System.out.println("Enter Student Email:");
-        studentObj.email = scannerObj.nextLine();
-        System.out.println("Enter Student Mark:");
-        String mark = scannerObj.nextLine();
-        studentObj.marks = Integer.parseInt(mark);
-
+        String email = scannerObj.nextLine();
+        Student studentObj = new Student(id, firstname, lastname, age,course,email);
         Students.add(studentObj);
     }
     public void viewStudents(){
         for (Student i : Students){
             i.printInfo();
-            break;
         }
     }
 
     void searchStudent(int id){
+        boolean found = false;
         for (Student i : Students){
-            if(i.studentId == id){
+            if(i.getStudentId() == id){
                 i.printInfo();
+                found = true;
                 break;
-            }else {
-                System.out.println("Incorrect ID");
-                menu();
             }
+        }
+        if (!found) {
+            System.out.println("Incorrect ID");
         }
     }
 
     void updateStudentInfo(int id){
+        boolean found = false;
         for (Student i : Students){
-            if(i.studentId == id) {
+            if(i.getStudentId() == id) {
+                found = true;
                 i.printInfo();
+                System.out.println("Enter the number of the line u want to change: ");
                 String userWrite = scannerObj.nextLine();
                 int userSelect = Integer.parseInt(userWrite);
 
                 switch (userSelect){
                     case 1:
                         System.out.println("Enter Student's new Name: ");
-                        i.firstname = scannerObj.nextLine();
+                        i.setFirstname(scannerObj.nextLine());
                         break;
                     case 2:
                         System.out.println("Enter Student's new Surname: ");
-                        i.lastname = scannerObj.nextLine();
+                        i.setLastname(scannerObj.nextLine());
                         break;
                     case 3:
                         System.out.println("Enter Student's new Age: ");
                         String entersAge = scannerObj.nextLine();
-                        i.age = Integer.parseInt(entersAge);
+                        i.setAge(Integer.parseInt(entersAge));
                         break;
                     case 4:
                         System.out.println("Enter Student's new course: ");
-                        i.course = scannerObj.nextLine();
+                        i.setCourse(scannerObj.nextLine());
                         break;
                     case 5:
                         System.out.println("Enter Student's new Email: ");
-                        i.email = scannerObj.nextLine();
-                        break;
-                    case 6:
-                        System.out.println("Enter Student's new Marks: ");
-                        String entersMarks = scannerObj.nextLine();
-                        i.marks = Integer.parseInt(entersMarks);
+                        i.setEmail(scannerObj.nextLine());
                         break;
                     default:
                         System.out.println("Select a number given above");
                 }
-            }else {
-                System.out.println("Incorrect ID");
-                menu();
+                break;
             }
         }
 
+        if (!found) {
+            System.out.println("Incorrect ID");
+        }
     }
+
+    public void deleteStudent(int id){
+        boolean found = false;
+        for (Student i : Students){
+            if (i.getStudentId() == id){
+                Students.remove(i);
+                found = true;
+                System.out.println("Student deleted successfully.");
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Incorrect ID");
+        }
+    }
+
+    public void addMarks(int id){
+        System.out.println("Enter Subject's Name: ");
+        String subject = scannerObj.nextLine();
+        System.out.println("Enter Subject's mark: ");
+        String markInput = scannerObj.nextLine();
+        int mark = Integer.parseInt(markInput);
+        boolean found = false;
+        for (Student i : Students){
+            if (i.getStudentId() == id){
+                i.addMark(subject, mark);
+                i.printSubjects();
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Incorrect ID");
+        }
+    }
+
+    public void viewStudentReport(int id){
+        boolean found = false;
+        for (Student i : Students){
+            if (i.getStudentId() == id){
+                System.out.println("=================================\n" +
+                        "     Student Report\n" +
+                        "=================================\n" +
+                        "\n" +
+                        "Name: \n" + i.getFirstname() + " "+ i.getLastname() + "\n" + "\n" +
+                        "Course \n" + i.getCourse() + "\n");
+                i.printSubjects();
+                System.out.println("\n" + "Average: " + "\n" + i.printAverage() + "\n");
+                if (i.printAverage() >= 70.0){
+                    System.out.println("Grade: " + "\n" + "A");
+                }else if(i.printAverage() < 70.0 && i.printAverage() >= 50.0){
+                    System.out.println("Grade: " + "\n" + "B");
+                }else {
+                    System.out.println("Grade: " + "\n" + "C");
+                }
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("Incorrect ID");
+        }
+
+
+    }
+
+    public void shortStudents(){
+        System.out.println("How do u wanna short students?"  + "\n" +
+                "1. By their name?"  + "\n" +
+                "2. By their Average mark?" + "\n" +
+                "3. Student ID?");
+        String userInput = scannerObj.nextLine();
+        int input = Integer.parseInt(userInput);
+        switch (input) {
+            case 1:
+                Students.sort(Comparator.comparing(Student::getFirstname));
+                break;
+            case 2:
+                Students.sort(Comparator.comparingDouble(Student::printAverage));
+                break;
+            case 3:
+                Students.sort(Comparator.comparingInt(Student::getStudentId));
+                break;
+            default:
+                System.out.println("Invalid choice");
+                return;
+        }
+
+        viewStudents();
+    }
+
+
+    public int userInput(){
+        System.out.println("Enter Student's Id: ");
+        String input = scannerObj.nextLine();
+        return Integer.parseInt(input);
+    }
+
 
     public static void main(String[] arg){
         StudentManagement students = new StudentManagement();
-        while(students.choice != 4){
+        while(students.choice != 8){
             students.menu();
             switch (students.choice){
                 case 1:
@@ -154,11 +357,24 @@ public class StudentManagement {
                     students.viewStudents();
                     break;
                 case 3:
-                    String idInput = students.scannerObj.nextLine();
-                    int id = Integer.parseInt(idInput);
-                    students.searchStudent(id);
+                    students.searchStudent(students.userInput());
                     break;
                 case 4:
+                    students.updateStudentInfo(students.userInput());
+                    break;
+                case 5:
+                    students.deleteStudent(students.userInput());
+                    break;
+                case 6:
+                    students.addMarks(students.userInput());
+                    break;
+                case 7:
+                    students.viewStudentReport(students.userInput());
+                    break;
+                case 8:
+                    students.shortStudents();
+                    break;
+                case 9:
                     break;
             }
         }
