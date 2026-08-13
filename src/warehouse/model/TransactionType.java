@@ -1,4 +1,4 @@
-package warehouse;
+package warehouse.model;
 
 public enum TransactionType {
     IN,

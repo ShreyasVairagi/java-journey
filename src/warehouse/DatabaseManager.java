@@ -1,9 +1,6 @@
 package warehouse;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DatabaseManager {
     private static final String URL = "jdbc:postgresql://localhost:5432/warehouse_db";
@@ -17,18 +14,6 @@ public class DatabaseManager {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
-        }
-    }
-
-    public static void insertTestSupplier() {
-        String sql = "INSERT INTO Supplier (supplierId, name, phone, email, address) " +
-                "VALUES (1, 'Shreyas', 74486752, 'Shreyas@gmail.com', '123 sdhgasd asjdb ask');";
-
-        try (Connection conn = connect();
-             Statement statement = conn.createStatement()) {
-                statement.executeUpdate(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 }
