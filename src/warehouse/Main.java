@@ -1,5 +1,6 @@
 package warehouse;
 
+import warehouse.dao.StorageLocationDAO;
 import warehouse.dao.SupplierDAO;
 import warehouse.model.Supplier;
 
@@ -8,7 +9,16 @@ import java.util.Scanner;
 
 public class Main {
     static void main() {
-        SupplierDAO supplierDAO = new SupplierDAO();
+
+//        StorageLocationDAO storageLocationDAO = new StorageLocationDAO();
+//        storageLocationDAO.addLocations();
+//        List<String> locations = storageLocationDAO.viewAllLocationIDs();
+//
+//        for (String l: locations){
+//            System.out.println(l);
+//        }
+
+//        SupplierDAO supplierDAO = new SupplierDAO();
 //        Scanner sc = new Scanner(System.in);
 //
 //        System.out.println("Enter the id");

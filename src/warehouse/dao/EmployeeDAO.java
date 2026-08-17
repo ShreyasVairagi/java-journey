@@ -7,6 +7,7 @@ import warehouse.model.Role;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class EmployeeDAO {
             stmt.setString(5, employee.getRole().name());
 
             return stmt.executeUpdate() > 0;
-        }catch (Exception e){
+        }catch (SQLException e){
             e.printStackTrace();
             return false;
         }
@@ -38,7 +39,7 @@ public class EmployeeDAO {
         List<Employee> employees = new ArrayList<>();
         String query = "SELECT * FROM Employee";
         try(Connection con = DatabaseManager.connect();
-        PreparedStatement stmt = con.prepareStatement(query);
+            PreparedStatement stmt = con.prepareStatement(query);
             ResultSet rs = stmt.executeQuery()) {
             while (rs.next()){
                 Employee e = new Employee(rs.getString("name"),
@@ -49,7 +50,7 @@ public class EmployeeDAO {
                 );
                 employees.add(e);
             }
-        } catch (Exception e){
+        } catch (SQLException e){
             e.printStackTrace();
         }
         return employees;
@@ -69,7 +70,7 @@ public class EmployeeDAO {
 
             return stmt.executeUpdate() > 0;
 
-        }catch (Exception e){
+        }catch (SQLException e){
             e.printStackTrace();
             return false;
         }
@@ -82,7 +83,7 @@ public class EmployeeDAO {
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1,id);
             return stmt.executeUpdate() > 0;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }

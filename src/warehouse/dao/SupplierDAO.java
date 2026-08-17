@@ -45,7 +45,7 @@ public class SupplierDAO {
 
                 suppliers.add(s);
             }
-        }catch (Exception e){
+        }catch (SQLException e){
             e.printStackTrace();
         }
         return suppliers;
@@ -56,7 +56,7 @@ public class SupplierDAO {
         String query = "UPDATE Supplier SET name = ?, phone = ?, email = ?, address = ? WHERE supplierid = ?;";
 
         try(Connection con = DatabaseManager.connect();
-        PreparedStatement stmt = con.prepareStatement(query)){
+            PreparedStatement stmt = con.prepareStatement(query)){
             stmt.setString(1,supplier.getName());
             stmt.setString(2,supplier.getEmail());
             stmt.setString(3,supplier.getPhone());
@@ -64,7 +64,7 @@ public class SupplierDAO {
             stmt.setInt(5,supplier.getId());
 
             return stmt.executeUpdate() > 0;
-        }catch (Exception e){
+        }catch (SQLException e){
             e.printStackTrace();
             return false;
         }
@@ -73,10 +73,10 @@ public class SupplierDAO {
     public boolean delete(int id){
         String query = "DELETE FROM Supplier WHERE supplierid = ? ";
         try(Connection con = DatabaseManager.connect();
-        PreparedStatement stmt = con.prepareStatement(query)){
-            stmt.setInt(1, id);
-            return stmt.executeUpdate() > 0;
-        }catch (Exception e){
+            PreparedStatement stmt = con.prepareStatement(query)){
+                stmt.setInt(1, id);
+                return stmt.executeUpdate() > 0;
+        }catch (SQLException e){
             e.printStackTrace();
             return false;
         }

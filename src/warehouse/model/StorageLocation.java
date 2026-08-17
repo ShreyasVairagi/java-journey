@@ -24,4 +24,6 @@ public class StorageLocation {
     public int getBin() {return bin;}
 
     public int getCapacity() {return capacity;}
+
+
 }
