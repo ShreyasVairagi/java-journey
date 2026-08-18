@@ -14,14 +14,14 @@ public class SupplierDAO {
     public boolean add(Supplier supplier){
         String query = "INSERT INTO Supplier (name, phone, email, address) VALUES (?,?,?,?);";
         try(Connection con = DatabaseManager.connect();
-        PreparedStatement stmt = con.prepareStatement(query)){
+        PreparedStatement pstmt = con.prepareStatement(query)){
 
-            stmt.setString(1, supplier.getName());
-            stmt.setString(2, supplier.getPhone());
-            stmt.setString(3, supplier.getEmail());
-            stmt.setString(4, supplier.getAddress());
+            pstmt.setString(1, supplier.getName());
+            pstmt.setString(2, supplier.getPhone());
+            pstmt.setString(3, supplier.getEmail());
+            pstmt.setString(4, supplier.getAddress());
 
-            return stmt.executeUpdate() > 0;
+            return pstmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -34,8 +34,8 @@ public class SupplierDAO {
         List<Supplier> suppliers = new ArrayList<>();
         String query = "SELECT * FROM Supplier";
         try(Connection con = DatabaseManager.connect();
-            PreparedStatement stmt = con.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery()){
+            PreparedStatement pstmt = con.prepareStatement(query);
+            ResultSet rs = pstmt.executeQuery()){
 
             while (rs.next()) {
                 Supplier s = new Supplier(rs.getString("name"),
@@ -56,14 +56,14 @@ public class SupplierDAO {
         String query = "UPDATE Supplier SET name = ?, phone = ?, email = ?, address = ? WHERE supplierid = ?;";
 
         try(Connection con = DatabaseManager.connect();
-            PreparedStatement stmt = con.prepareStatement(query)){
-            stmt.setString(1,supplier.getName());
-            stmt.setString(2,supplier.getEmail());
-            stmt.setString(3,supplier.getPhone());
-            stmt.setString(4,supplier.getAddress());
-            stmt.setInt(5,supplier.getId());
+            PreparedStatement pstmt = con.prepareStatement(query)){
+            pstmt.setString(1,supplier.getName());
+            pstmt.setString(2,supplier.getEmail());
+            pstmt.setString(3,supplier.getPhone());
+            pstmt.setString(4,supplier.getAddress());
+            pstmt.setInt(5,supplier.getId());
 
-            return stmt.executeUpdate() > 0;
+            return pstmt.executeUpdate() > 0;
         }catch (SQLException e){
             e.printStackTrace();
             return false;
@@ -73,9 +73,9 @@ public class SupplierDAO {
     public boolean delete(int id){
         String query = "DELETE FROM Supplier WHERE supplierid = ? ";
         try(Connection con = DatabaseManager.connect();
-            PreparedStatement stmt = con.prepareStatement(query)){
-                stmt.setInt(1, id);
-                return stmt.executeUpdate() > 0;
+            PreparedStatement pstmt = con.prepareStatement(query)){
+                pstmt.setInt(1, id);
+                return pstmt.executeUpdate() > 0;
         }catch (SQLException e){
             e.printStackTrace();
             return false;

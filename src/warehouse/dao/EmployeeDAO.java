@@ -18,15 +18,15 @@ public class EmployeeDAO {
     public boolean add(Employee employee){
         String query = "INSERT INTO employee (name, email, phone, address , role) VALUES (?, ?, ?, ?, ?);";
         try(Connection con = DatabaseManager.connect();
-            PreparedStatement stmt = con.prepareStatement(query)){
+            PreparedStatement pstmt = con.prepareStatement(query)){
 
-            stmt.setString(1, employee.getName());
-            stmt.setString(2, employee.getEmail());
-            stmt.setString(3, employee.getPhone());
-            stmt.setString(4, employee.getAddress());
-            stmt.setString(5, employee.getRole().name());
+            pstmt.setString(1, employee.getName());
+            pstmt.setString(2, employee.getEmail());
+            pstmt.setString(3, employee.getPhone());
+            pstmt.setString(4, employee.getAddress());
+            pstmt.setString(5, employee.getRole().name());
 
-            return stmt.executeUpdate() > 0;
+            return pstmt.executeUpdate() > 0;
         }catch (SQLException e){
             e.printStackTrace();
             return false;
@@ -39,8 +39,8 @@ public class EmployeeDAO {
         List<Employee> employees = new ArrayList<>();
         String query = "SELECT * FROM Employee";
         try(Connection con = DatabaseManager.connect();
-            PreparedStatement stmt = con.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery()) {
+            PreparedStatement pstmt = con.prepareStatement(query);
+            ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()){
                 Employee e = new Employee(rs.getString("name"),
                         rs.getString("email"),
@@ -60,15 +60,15 @@ public class EmployeeDAO {
     public boolean update(Employee employee){
         String query = "UPDATE Employee SET name = ?, email = ?, phone = ?, address = ?, roles = ? WHERE employeeid = ?";
         try(Connection con = DatabaseManager.connect();
-            PreparedStatement stmt = con.prepareStatement(query)){
-            stmt.setString(1, employee.getName());
-            stmt.setString(2, employee.getEmail());
-            stmt.setString(3, employee.getPhone());
-            stmt.setString(4, employee.getAddress());
-            stmt.setString(5, employee.getRole().name());
-            stmt.setInt(6,employee.getId());
+            PreparedStatement pstmt = con.prepareStatement(query)){
+            pstmt.setString(1, employee.getName());
+            pstmt.setString(2, employee.getEmail());
+            pstmt.setString(3, employee.getPhone());
+            pstmt.setString(4, employee.getAddress());
+            pstmt.setString(5, employee.getRole().name());
+            pstmt.setInt(6,employee.getId());
 
-            return stmt.executeUpdate() > 0;
+            return pstmt.executeUpdate() > 0;
 
         }catch (SQLException e){
             e.printStackTrace();
@@ -80,9 +80,9 @@ public class EmployeeDAO {
     public boolean delete(int id) {
         String query = "DELETE FROM Employee WHERE employeeid = ?";
         try (Connection con = DatabaseManager.connect();
-             PreparedStatement stmt = con.prepareStatement(query)) {
-            stmt.setInt(1,id);
-            return stmt.executeUpdate() > 0;
+             PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1,id);
+            return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

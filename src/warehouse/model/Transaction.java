@@ -7,14 +7,16 @@ public class Transaction {
     private int quantity;
     private TransactionType type;
     private int date;
+    private int time;
 
-    public Transaction(int id, int product, int employee, int quantity, TransactionType type, int date) {
+    public Transaction(int id, int product, int employee, int quantity, TransactionType type, int date, int time) {
         this.id = id;
         this.product = product;
         this.employee = employee;
         this.quantity = quantity;
         this.type = type;
         this.date = date;
+        this.time = time;
     }
 
     public int getId() {return id;}
@@ -28,4 +30,6 @@ public class Transaction {
     public TransactionType getType() {return type;}
 
     public int getDate() {return date;}
+
+    public int getTime() {return time;}
 }
