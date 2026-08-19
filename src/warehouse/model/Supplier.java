@@ -22,6 +22,10 @@ public class Supplier {
         this.address = address;
     }
 
+    public Supplier(int supplierid) {
+        this.id = supplierid;
+    }
+
     public int getId() {return id;}
 
     public String getName() {return name;}

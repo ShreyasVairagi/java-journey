@@ -1,54 +1,49 @@
 package warehouse.model;
 
-public class Product  {
+public class Product {
     private int id;
     private String name;
     private String description;
     private double buyPrice;
     private double sellPrice;
-    private int quantity;
     private int minimumStock;
-    private int supplier;
-    private String storageLocationID;
+    private Supplier supplier;
 
-    public Product(String name, String description, double buyPrice, double sellPrice, int quantity, int minimumStock, int supplier, String storageLocationID) {
+    public Product(String name, String description, double buyPrice, double sellPrice, int minimumStock, Supplier supplier) {
         this.name = name;
         this.description = description;
         this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
-        this.quantity = quantity;
         this.minimumStock = minimumStock;
         this.supplier = supplier;
-        this.storageLocationID = storageLocationID;
     }
 
-    public Product(int id, String name, String description, double buyPrice, double sellPrice, int quantity, int minimumStock, int supplier, String storageLocationID) {
+    public Product(int id, String name, String description, double buyPrice, double sellPrice,  int minimumStock, Supplier supplier) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
-        this.quantity = quantity;
         this.minimumStock = minimumStock;
         this.supplier = supplier;
-        this.storageLocationID = storageLocationID;
     }
 
-    public int getId() {return id;}
+    public Product(int id) {
+        this.id = id;
+    }
 
-    public String getName() {return name;}
+    public int getId() { return id; }
 
-    public String getDescription() {return description;}
+    public String getName() { return name; }
 
-    public double getBuyPrice() {return buyPrice;}
+    public String getDescription() { return description; }
 
-    public double getSellPrice() {return sellPrice;}
+    public double getBuyPrice() { return buyPrice; }
 
-    public int getQuantity() {return quantity;}
+    public double getSellPrice() { return sellPrice; }
 
-    public int getMinimumStock() {return minimumStock;}
+    public int getMinimumStock() { return minimumStock; }
 
-    public int getSupplier() {return supplier;}
+    public Supplier getSupplier() { return supplier; }
 
-    public String getStorageLocationID() {return storageLocationID;}
 }

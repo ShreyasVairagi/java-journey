@@ -14,6 +14,9 @@ public class StorageLocation {
         this.bin = bin;
         this.capacity = capacity;
     }
+    public StorageLocation(String locationID) {
+        this.locationID = locationID;
+    }
 
     public String getLocationID() {return locationID;}
 

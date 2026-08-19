@@ -27,6 +27,10 @@ public class Employee {
         this.role = role;
     }
 
+    public Employee(int id) {
+        this.id = id;
+    }
+
     public int getId() {return id;}
 
     public String getName() {return name;}

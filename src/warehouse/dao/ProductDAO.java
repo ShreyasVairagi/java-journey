@@ -2,6 +2,8 @@ package warehouse.dao;
 
 import warehouse.DatabaseManager;
 import warehouse.model.Product;
+import warehouse.model.StorageLocation;
+import warehouse.model.Supplier;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,7 +17,7 @@ public class ProductDAO {
 
     //add
     public boolean addProduct(Product product) {
-        String sql = "INSERT INTO product (name, description, buyprice, sellprice, quantity, minimumstock, supplierid, locationid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO product (name, description, buyprice, sellprice, minimumstock, supplierid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -24,10 +26,8 @@ public class ProductDAO {
             pstmt.setString(2, product.getDescription());
             pstmt.setDouble(3, product.getBuyPrice());
             pstmt.setDouble(4, product.getSellPrice());
-            pstmt.setInt(5, product.getQuantity());
             pstmt.setInt(6, product.getMinimumStock());
-            pstmt.setInt(7, product.getSupplier());
-            pstmt.setString(8, product.getStorageLocationID());
+            pstmt.setInt(7, product.getSupplier().getId());
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -46,16 +46,16 @@ public class ProductDAO {
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
+                Supplier supplier = new Supplier(rs.getInt("supplierid"));
+
                 Product product = new Product(
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("description"),
                         rs.getDouble("buyprice"),
                         rs.getDouble("sellprice"),
-                        rs.getInt("quantity"),
                         rs.getInt("minimumstock"),
-                        rs.getInt("supplierid"),
-                        rs.getString("locationid")
+                        supplier
                 );
                 products.add(product);
             }
@@ -68,19 +68,16 @@ public class ProductDAO {
 
     //update
     public boolean updateProduct(Product product) {
-        String sql = "UPDATE product SET name = ?, description = ?, buyprice = ?, sellprice = ?, quantity = ?, minimumstock = ?, supplier = ?, locationid = ? WHERE id = ?";
+        String sql = "UPDATE product SET name = ?, description = ?, buyprice = ?, sellprice = ?, minimumstock = ?, supplierid = ? WHERE id = ?";
 
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
             pstmt.setString(1, product.getName());
             pstmt.setString(2, product.getDescription());
             pstmt.setDouble(3, product.getBuyPrice());
             pstmt.setDouble(4, product.getSellPrice());
-            pstmt.setInt(5, product.getQuantity());
             pstmt.setInt(6, product.getMinimumStock());
-            pstmt.setInt(7, product.getSupplier());
-            pstmt.setString(8, product.getStorageLocationID());
+            pstmt.setInt(7, product.getSupplier().getId());
             pstmt.setInt(9, product.getId());
 
             return pstmt.executeUpdate() > 0;
@@ -89,6 +86,8 @@ public class ProductDAO {
             return false;
         }
     }
+
+
 
     //delete
     public boolean deleteProduct(int productId) {

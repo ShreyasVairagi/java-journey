@@ -1,15 +1,29 @@
 package warehouse.model;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 public class Transaction {
     private int id;
-    private int product;
-    private int employee;
+    private Product product;       // Full Product object
+    private Employee employee;     // Full Employee object
     private int quantity;
     private TransactionType type;
-    private int date;
-    private int time;
+    private LocalDate date;        // Proper date type
+    private LocalTime time;        // Proper time type
 
-    public Transaction(int id, int product, int employee, int quantity, TransactionType type, int date, int time) {
+    // Constructor without ID
+    public Transaction(Product product, Employee employee, int quantity, TransactionType type, LocalDate date, LocalTime time) {
+        this.product = product;
+        this.employee = employee;
+        this.quantity = quantity;
+        this.type = type;
+        this.date = date;
+        this.time = time;
+    }
+
+    // Constructor with ID
+    public Transaction(int id, Product product, Employee employee, int quantity, TransactionType type, LocalDate date, LocalTime time) {
         this.id = id;
         this.product = product;
         this.employee = employee;
@@ -19,17 +33,17 @@ public class Transaction {
         this.time = time;
     }
 
-    public int getId() {return id;}
+    public int getId() { return id; }
 
-    public int getProduct() {return product;}
+    public Product getProduct() { return product; }
 
-    public int getEmployee() {return employee;}
+    public Employee getEmployee() { return employee; }
 
-    public int getQuantity() {return quantity;}
+    public int getQuantity() { return quantity; }
 
-    public TransactionType getType() {return type;}
+    public TransactionType getType() { return type; }
 
-    public int getDate() {return date;}
+    public LocalDate getDate() { return date; }
 
-    public int getTime() {return time;}
+    public LocalTime getTime() { return time; }
 }
