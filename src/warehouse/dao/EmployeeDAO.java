@@ -3,6 +3,7 @@ package warehouse.dao;
 import warehouse.DatabaseManager;
 import warehouse.model.Employee;
 import warehouse.model.Role;
+import warehouse.model.Supplier;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -87,5 +88,28 @@ public class EmployeeDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public Employee findSingleEmployee(int id) {
+        String query = "SELECT * FROM employee WHERE employeeid = ?";
+        Employee employee = null;
+        try (Connection con = DatabaseManager.connect();
+             PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int empId = rs.getInt("employeeid");
+                    String name = rs.getString("name");
+                    String email = rs.getString("email");
+                    String phone = rs.getString("phone");
+                    String address = rs.getString("address");
+                    Role role = Role.valueOf(rs.getString("role"));
+                    employee = new Employee(empId, name, email, phone, address, role);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employee;
     }
 }

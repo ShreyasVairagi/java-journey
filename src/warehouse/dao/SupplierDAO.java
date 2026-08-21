@@ -82,5 +82,22 @@ public class SupplierDAO {
         }
     }
 
+//    public Supplier findSingleSupplier(int id){
+//        String query = "SELECT * FROM Supplier WHERE supplierid = ? ";
+//        try(Connection con = DatabaseManager.connect();
+//            PreparedStatement pstmt = con.prepareStatement(query);
+//            ResultSet rs = pstmt.executeQuery()){
+//            int supplierId = rs.getInt("supplierid");
+//            String name = rs.getString("name");
+//            String email = rs.getString("phone");
+//            String phone = rs.getString("email");
+//            String address = rs.getString("address");
+//            Supplier supplierObj = new Supplier(supplierId, name, email, phone, address);
+//        }catch (SQLException e){
+//            e.printStackTrace();
+//        }
+//        return supplierObj;
+//    }
+
 
 }
