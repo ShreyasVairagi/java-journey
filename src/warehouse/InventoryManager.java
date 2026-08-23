@@ -1,13 +1,12 @@
 package warehouse;
 
-import warehouse.dao.EmployeeDAO;
-import warehouse.dao.InventoryStockDAO;
-import warehouse.dao.ProductDAO;
-import warehouse.dao.TransactionDAO;
+import warehouse.dao.*;
 import warehouse.model.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 
 public class InventoryManager {
@@ -31,7 +30,12 @@ public class InventoryManager {
 //    }
 
     //positive number to add or negative number to reduce stock
-    public void adjustStock(Product product, StorageLocation storageLocation, int quantity){
+    public void adjustStock(Product product, int quantity) {
+        if (quantity == 0) {
+            System.out.println("Quantity cannot be zero. Stock adjustment cancelled.");
+            return;
+        }
+
         System.out.println("Enter your employee id:");
         String stemployeeId = sc.nextLine();
         int employeeId = Integer.parseInt(stemployeeId);
@@ -44,29 +48,71 @@ public class InventoryManager {
             return;
         }
 
-        //record transaction
-        Transaction transaction = new Transaction(product, employee, quantity, TransactionType.IN, LocalDate.now(), LocalTime.now());
+        // 1. Record transaction
+        TransactionType type = (quantity > 0) ? TransactionType.IN : TransactionType.OUT;
+        int transactionQuantity = Math.abs(quantity);
+        Transaction transaction = new Transaction(product, employee, transactionQuantity, type, LocalDate.now(), LocalTime.now());
         TransactionDAO transactionDAO = new TransactionDAO();
         transactionDAO.add(transaction);
 
-        //update product
-        InventoryStockDAO productDAO = new InventoryStockDAO();
-        // varibale to store this products quantity
-        int newStockQuantity = quantity;
-        // array list for db quantites and short them
+        InventoryStockDAO inventoryStockDAO = new InventoryStockDAO();
+        List<InventoryStock> existingQuantities = inventoryStockDAO.findStockForProduct(product);
 
-        // check if user quantity + the last shorted quantity in arraylist is greater than location's capacity
-            //fill the current location
-            //ask employee to choose another location
-            //add remaining items in that location
-        //InventoryStockDAO.adjustStockQuantity(product.getId(), quantity);
+        // 2. Handle positive value
+        if (quantity > 0) {
+            int userQuantity = quantity;
+            Iterator<InventoryStock> it = existingQuantities.iterator();
 
-        // when reducing the quantity from the last index of the array list
-        // if the number goes less than 0, then delete that raw from db
+            // Fill up existing bins first
+            while (it.hasNext() && userQuantity > 0) {
+                InventoryStock currentStock = it.next();
+                int dbQuantity = currentStock.getQuantity();
+                int productID = currentStock.getProduct().getId();
+                String productLocation = currentStock.getLocation().getLocationID();
 
+                int spaceAvailable = 100 - dbQuantity;
 
-        InventoryStock inventoryStock = new InventoryStock(product, storageLocation, quantity);
+                if (spaceAvailable > 0) {
+                    int amountToAdd = Math.min(spaceAvailable, userQuantity);
+                    inventoryStockDAO.updateQuantity(productID, productLocation, amountToAdd);
+                    userQuantity -= amountToAdd;
+                }
+            }
 
+            // Handle overflow
+            while (userQuantity > 0) {
+                System.out.println("Existing locations are full. Enter new storage location ID for the remaining " + userQuantity + " items:");
+                String newLocationId = sc.nextLine();
+
+                int amountForThisBin = Math.min(100, userQuantity);
+                inventoryStockDAO.addProductToLocation(product.getId(), newLocationId, amountForThisBin);
+                userQuantity -= amountForThisBin;
+            }
+        }
+
+        // 3. Handle negative value
+        else {
+            int inputConvertion = Math.abs(quantity);
+
+            for (int i = existingQuantities.size() - 1; i >= 0; i--) {
+                InventoryStock currentStock = existingQuantities.get(i);
+                int dbQuantity = currentStock.getQuantity();
+                int productID = currentStock.getProduct().getId();
+                String productLocation = currentStock.getLocation().getLocationID();
+
+                if (dbQuantity >= inputConvertion) {
+                    inventoryStockDAO.updateQuantity(productID, productLocation, -inputConvertion);
+                    inputConvertion = 0;
+                } else {
+                    inventoryStockDAO.removeLocation(productID, productLocation);
+                    inputConvertion -= dbQuantity;
+                }
+
+                if (inputConvertion == 0) {
+                    break;
+                }
+            }
+        }
     }
 
 //    public moveProduct()
