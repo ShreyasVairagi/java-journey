@@ -48,6 +48,26 @@ public class InventoryStockDAO {
         }
     }
 
+    public double getTotalInventoryValue() {
+        String query = "SELECT SUM(pl.quantity * p.buyprice) AS total_value " +
+                "FROM product_location pl " +
+                "JOIN product p ON pl.product_id = p.productid";
+
+        double totalValue = 0.0;
+
+        try (Connection con = DatabaseManager.connect();
+             PreparedStatement pstmt = con.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            if (rs.next()) {
+                totalValue = rs.getDouble("total_value");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalValue;
+    }
+
     public List<InventoryStock> findStockForProduct(Product product) {
         String query = "SELECT pl.locationid, pl.quantity, s.aisle, s.shelf, s.bin, s.capacity " +
                 "FROM product_location pl " +
@@ -90,6 +110,21 @@ public class InventoryStockDAO {
 
             pstmt.setInt(1, productId);
             pstmt.setString(2, locationId);
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean removeLocation(int productId) {
+        String sql = "DELETE FROM product_location WHERE product_id = ?";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, productId);
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {

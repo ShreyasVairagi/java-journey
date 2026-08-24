@@ -10,6 +10,9 @@ import java.util.Scanner;
 public class Main {
     static void main() {
 
+        InventoryManager inventoryManager = new InventoryManager();
+        inventoryManager.calculateInventoryValue();
+
 //        StorageLocationDAO storageLocationDAO = new StorageLocationDAO();
 //        storageLocationDAO.addLocations();
 //        List<String> locations = storageLocationDAO.viewAllLocationIDs();

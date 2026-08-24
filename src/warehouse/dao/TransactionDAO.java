@@ -66,6 +66,39 @@ public class TransactionDAO {
         return transactions;
     }
 
+    public List<Transaction> getProductTransactionHistory(int productId) {
+        List<Transaction> transactions = new ArrayList<>();
+        String query = "SELECT * FROM Transaction WHERE productid = ?";
+
+        try (Connection con = DatabaseManager.connect();
+             PreparedStatement pstmt = con.prepareStatement(query)) {
+
+            pstmt.setInt(1, productId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Product product = new Product(rs.getInt("productid"));
+                    Employee employee = new Employee(rs.getInt("employeeid"));
+
+                    Transaction t = new Transaction(
+                            rs.getInt("transactionid"),
+                            product,
+                            employee,
+                            rs.getInt("quantity"),
+                            TransactionType.valueOf(rs.getString("type").toUpperCase()),
+                            rs.getDate("date").toLocalDate(),
+                            rs.getTime("time").toLocalTime()
+                    );
+
+                    transactions.add(t);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return transactions;
+    }
+
     // UPDATE
     public boolean update(Transaction transaction) {
         String query = "UPDATE Transaction SET productid = ?, employeeid = ?, quantity = ?, type = ?, date = ?, time = ? WHERE transactionid = ?;";

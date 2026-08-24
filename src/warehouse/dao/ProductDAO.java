@@ -1,9 +1,7 @@
 package warehouse.dao;
 
 import warehouse.DatabaseManager;
-import warehouse.model.Product;
-import warehouse.model.StorageLocation;
-import warehouse.model.Supplier;
+import warehouse.model.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -64,6 +62,32 @@ public class ProductDAO {
             e.printStackTrace();
         }
         return products;
+    }
+
+    public Product findSingleProduct(int id) {
+        String query = "SELECT * FROM product WHERE id = ?";
+        Product product = null; // Declare up here
+
+        try (Connection con = DatabaseManager.connect();
+             PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int empId = rs.getInt("id");
+                    String name = rs.getString("name");
+                    String description = rs.getString("description");
+                    Double buyprice =  rs.getDouble("buyprice");
+                    Double sellprice =  rs.getDouble("sellprice");
+                    int minimumstock =  rs.getInt("minimumstock");
+                    Supplier supplier = new Supplier(rs.getInt("supplierid"));
+
+                    product = new Product(empId, name, description, buyprice, sellprice, minimumstock, supplier); // Assign here
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return product; // Now it can see 'product'!
     }
 
     //update

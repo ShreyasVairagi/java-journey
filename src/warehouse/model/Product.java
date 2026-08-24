@@ -9,12 +9,12 @@ public class Product {
     private int minimumStock;
     private Supplier supplier;
 
-    public Product(String name, String description, double buyPrice, double sellPrice, int StockQuantity, Supplier supplier) {
+    public Product(String name, String description, double buyPrice, double sellPrice, int minimumStock, Supplier supplier) {
         this.name = name;
         this.description = description;
         this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
-        this.minimumStock = StockQuantity;
+        this.minimumStock = minimumStock;
         this.supplier = supplier;
     }
 

@@ -82,22 +82,28 @@ public class SupplierDAO {
         }
     }
 
-//    public Supplier findSingleSupplier(int id){
-//        String query = "SELECT * FROM Supplier WHERE supplierid = ? ";
-//        try(Connection con = DatabaseManager.connect();
-//            PreparedStatement pstmt = con.prepareStatement(query);
-//            ResultSet rs = pstmt.executeQuery()){
-//            int supplierId = rs.getInt("supplierid");
-//            String name = rs.getString("name");
-//            String email = rs.getString("phone");
-//            String phone = rs.getString("email");
-//            String address = rs.getString("address");
-//            Supplier supplierObj = new Supplier(supplierId, name, email, phone, address);
-//        }catch (SQLException e){
-//            e.printStackTrace();
-//        }
-//        return supplierObj;
-//    }
+    public Supplier findSingleSupplier(int id){
+        String query = "SELECT * FROM Supplier WHERE supplierid = ?";
+        Supplier supplierObj = null;
+
+        try(Connection con = DatabaseManager.connect();
+            PreparedStatement pstmt = con.prepareStatement(query)){
+            pstmt.setInt(1, id);
+            try(ResultSet rs = pstmt.executeQuery()){
+                if (rs.next()){
+                    int supplierId = rs.getInt("supplierid");
+                    String name = rs.getString("name");
+                    String phone = rs.getString("phone");
+                    String email = rs.getString("email");
+                    String address = rs.getString("address");
+                    supplierObj = new Supplier(supplierId, name, email, phone, address);
+                }
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return supplierObj;
+    }
 
 
 }
