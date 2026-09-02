@@ -7,8 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import warehouse.DatabaseManager;
-import warehouse.model.StorageLocation;
+import warehouse.managers.DatabaseManager;
 
 public class StorageLocationDAO {
     //CRUD

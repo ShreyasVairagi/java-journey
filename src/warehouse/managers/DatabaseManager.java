@@ -1,4 +1,4 @@
-package warehouse;
+package warehouse.managers;
 
 import java.sql.*;
 

@@ -1,6 +1,6 @@
 package warehouse.dao;
 
-import warehouse.DatabaseManager;
+import warehouse.managers.DatabaseManager;
 import warehouse.model.*;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ public class ProductDAO {
 
     //add
     public boolean addProduct(Product product) {
-        String sql = "INSERT INTO product (name, description, buyprice, sellprice, minimumstock, supplierid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO product (name, description, buyprice, sellprice, minimumstock, supplierid) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -24,8 +24,8 @@ public class ProductDAO {
             pstmt.setString(2, product.getDescription());
             pstmt.setDouble(3, product.getBuyPrice());
             pstmt.setDouble(4, product.getSellPrice());
-            pstmt.setInt(6, product.getMinimumStock());
-            pstmt.setInt(7, product.getSupplier().getId());
+            pstmt.setInt(5, product.getMinimumStock());
+            pstmt.setInt(6, product.getSupplier().getId());
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -47,7 +47,7 @@ public class ProductDAO {
                 Supplier supplier = new Supplier(rs.getInt("supplierid"));
 
                 Product product = new Product(
-                        rs.getInt("id"),
+                        rs.getInt("productid"),
                         rs.getString("name"),
                         rs.getString("description"),
                         rs.getDouble("buyprice"),
@@ -65,15 +65,15 @@ public class ProductDAO {
     }
 
     public Product findSingleProduct(int id) {
-        String query = "SELECT * FROM product WHERE id = ?";
-        Product product = null; // Declare up here
+        String query = "SELECT * FROM product WHERE productid = ?";
+        Product product = null;
 
         try (Connection con = DatabaseManager.connect();
              PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    int empId = rs.getInt("id");
+                    int empId = rs.getInt("productid");
                     String name = rs.getString("name");
                     String description = rs.getString("description");
                     Double buyprice =  rs.getDouble("buyprice");
@@ -87,12 +87,13 @@ public class ProductDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return product; // Now it can see 'product'!
+        return product;
     }
 
     //update
     public boolean updateProduct(Product product) {
-        String sql = "UPDATE product SET name = ?, description = ?, buyprice = ?, sellprice = ?, minimumstock = ?, supplierid = ? WHERE id = ?";
+        // 7 placeholders total
+        String sql = "UPDATE product SET name = ?, description = ?, buyprice = ?, sellprice = ?, minimumstock = ?, supplierid = ? WHERE productid = ?";
 
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -100,9 +101,9 @@ public class ProductDAO {
             pstmt.setString(2, product.getDescription());
             pstmt.setDouble(3, product.getBuyPrice());
             pstmt.setDouble(4, product.getSellPrice());
-            pstmt.setInt(6, product.getMinimumStock());
-            pstmt.setInt(7, product.getSupplier().getId());
-            pstmt.setInt(9, product.getId());
+            pstmt.setInt(5, product.getMinimumStock());
+            pstmt.setInt(6, product.getSupplier().getId());
+            pstmt.setInt(7, product.getId());
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -115,7 +116,7 @@ public class ProductDAO {
 
     //delete
     public boolean deleteProduct(int productId) {
-        String sql = "DELETE FROM product WHERE id = ?";
+        String sql = "DELETE FROM product WHERE productid = ?";
 
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

@@ -1,6 +1,6 @@
 package warehouse.dao;
 
-import warehouse.DatabaseManager;
+import warehouse.managers.DatabaseManager;
 import warehouse.model.InventoryStock;
 import warehouse.model.Product;
 import warehouse.model.StorageLocation;
@@ -15,7 +15,8 @@ import java.util.List;
 public class InventoryStockDAO {
 
     public boolean addProductToLocation(int productId, String locationId, int quantity) {
-        String sql = "INSERT INTO product_location (product_id, locationid, quantity) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO inventory_stock (product_id, locationid, quantity) VALUES (?, ?, ?) " +
+                "ON CONFLICT (product_id, locationid) DO UPDATE SET quantity = inventory_stock.quantity + ?";
 
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -23,10 +24,13 @@ public class InventoryStockDAO {
             pstmt.setInt(1, productId);
             pstmt.setString(2, locationId);
             pstmt.setInt(3, quantity);
+            pstmt.setInt(4, quantity);
 
-            return pstmt.executeUpdate() > 0;
+            pstmt.executeUpdate();
+            return true;
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error adding product to location: " + e.getMessage());
             return false;
         }
     }
@@ -129,6 +133,24 @@ public class InventoryStockDAO {
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean locationExists(String locationId) {
+        String sql = "SELECT 1 FROM storage_location WHERE locationid = ?";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, locationId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error checking location existence: " + e.getMessage());
             return false;
         }
     }

@@ -22,8 +22,8 @@ public class Supplier {
         this.address = address;
     }
 
-    public Supplier(int supplierid) {
-        this.id = supplierid;
+    public Supplier(int id) {
+        this.id = id;
     }
 
     public int getId() {return id;}

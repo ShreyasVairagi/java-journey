@@ -5,12 +5,12 @@ import java.time.LocalTime;
 
 public class Transaction {
     private int id;
-    private Product product;       // Full Product object
-    private Employee employee;     // Full Employee object
+    private Product product;
+    private Employee employee;
     private int quantity;
     private TransactionType type;
-    private LocalDate date;        // Proper date type
-    private LocalTime time;        // Proper time type
+    private LocalDate date;
+    private LocalTime time;
 
     // Constructor without ID
     public Transaction(Product product, Employee employee, int quantity, TransactionType type, LocalDate date, LocalTime time) {

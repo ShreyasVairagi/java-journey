@@ -1,9 +1,8 @@
 package warehouse.dao;
 
-import warehouse.DatabaseManager;
+import warehouse.managers.DatabaseManager;
 import warehouse.model.Employee;
 import warehouse.model.Role;
-import warehouse.model.Supplier;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,7 +16,7 @@ public class EmployeeDAO {
 
     //add
     public boolean add(Employee employee){
-        String query = "INSERT INTO employee (name, email, phone, address , role) VALUES (?, ?, ?, ?, ?);";
+        String query = "INSERT INTO employee (name, email, phone, address, role) VALUES (?, ?, ?, ?, ?);";
         try(Connection con = DatabaseManager.connect();
             PreparedStatement pstmt = con.prepareStatement(query)){
 
@@ -32,18 +31,19 @@ public class EmployeeDAO {
             e.printStackTrace();
             return false;
         }
-
     }
 
     //Read all
-    public List<Employee> viewAll(Employee employee){
+    public List<Employee> viewAll(){
         List<Employee> employees = new ArrayList<>();
-        String query = "SELECT * FROM Employee";
+        String query = "SELECT * FROM employee";
         try(Connection con = DatabaseManager.connect();
             PreparedStatement pstmt = con.prepareStatement(query);
             ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()){
-                Employee e = new Employee(rs.getString("name"),
+                Employee e = new Employee(
+                        rs.getInt("employeeid"),
+                        rs.getString("name"),
                         rs.getString("email"),
                         rs.getString("phone"),
                         rs.getString("address"),
@@ -59,7 +59,7 @@ public class EmployeeDAO {
 
     //update
     public boolean update(Employee employee){
-        String query = "UPDATE Employee SET name = ?, email = ?, phone = ?, address = ?, roles = ? WHERE employeeid = ?";
+        String query = "UPDATE employee SET name = ?, email = ?, phone = ?, address = ?, role = ? WHERE employeeid = ?";
         try(Connection con = DatabaseManager.connect();
             PreparedStatement pstmt = con.prepareStatement(query)){
             pstmt.setString(1, employee.getName());
@@ -67,7 +67,7 @@ public class EmployeeDAO {
             pstmt.setString(3, employee.getPhone());
             pstmt.setString(4, employee.getAddress());
             pstmt.setString(5, employee.getRole().name());
-            pstmt.setInt(6,employee.getId());
+            pstmt.setInt(6, employee.getId());
 
             return pstmt.executeUpdate() > 0;
 
@@ -79,12 +79,12 @@ public class EmployeeDAO {
 
     //delete
     public boolean delete(int id) {
-        String query = "DELETE FROM Employee WHERE employeeid = ?";
+        String query = "DELETE FROM employee WHERE employeeid = ?";
         try (Connection con = DatabaseManager.connect();
              PreparedStatement pstmt = con.prepareStatement(query)) {
-            pstmt.setInt(1,id);
+            pstmt.setInt(1, id);
             return pstmt.executeUpdate() > 0;
-        } catch (SQLException e) {
+        } catch (SQLException e){
             e.printStackTrace();
             return false;
         }
@@ -103,11 +103,11 @@ public class EmployeeDAO {
                     String email = rs.getString("email");
                     String phone = rs.getString("phone");
                     String address = rs.getString("address");
-                    Role role = Role.valueOf(rs.getString("role"));
+                    Role role = Role.valueOf(rs.getString("role").toUpperCase());
                     employee = new Employee(empId, name, email, phone, address, role);
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException e){
             e.printStackTrace();
         }
         return employee;

@@ -1,6 +1,6 @@
 package warehouse.dao;
 
-import warehouse.DatabaseManager;
+import warehouse.managers.DatabaseManager;
 import warehouse.model.Employee;
 import warehouse.model.Product;
 import warehouse.model.Transaction;
@@ -48,7 +48,7 @@ public class TransactionDAO {
                 Product product = new Product(rs.getInt("productid"));
                 Employee employee = new Employee(rs.getInt("employeeid"));
 
-                Transaction t = new Transaction(
+                Transaction transaction = new Transaction(
                         rs.getInt("transactionid"),
                         product,
                         employee,
@@ -58,7 +58,7 @@ public class TransactionDAO {
                         rs.getTime("time").toLocalTime()
                 );
 
-                transactions.add(t);
+                transactions.add(transaction);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -80,7 +80,7 @@ public class TransactionDAO {
                     Product product = new Product(rs.getInt("productid"));
                     Employee employee = new Employee(rs.getInt("employeeid"));
 
-                    Transaction t = new Transaction(
+                    Transaction transaction = new Transaction(
                             rs.getInt("transactionid"),
                             product,
                             employee,
@@ -90,7 +90,7 @@ public class TransactionDAO {
                             rs.getTime("time").toLocalTime()
                     );
 
-                    transactions.add(t);
+                    transactions.add(transaction);
                 }
             }
         } catch (SQLException e) {

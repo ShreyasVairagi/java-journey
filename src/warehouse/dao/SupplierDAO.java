@@ -1,6 +1,6 @@
 package warehouse.dao;
 
-import warehouse.DatabaseManager;
+import warehouse.managers.DatabaseManager;
 import warehouse.model.Supplier;
 
 import java.sql.*;
@@ -30,7 +30,7 @@ public class SupplierDAO {
     }
 
     // Read Supplier data
-    public List<Supplier> veiwAll(){
+    public List<Supplier> viewAll(){
         List<Supplier> suppliers = new ArrayList<>();
         String query = "SELECT * FROM Supplier";
         try(Connection con = DatabaseManager.connect();
@@ -38,12 +38,12 @@ public class SupplierDAO {
             ResultSet rs = pstmt.executeQuery()){
 
             while (rs.next()) {
-                Supplier s = new Supplier(rs.getString("name"),
+                Supplier supplier = new Supplier(rs.getString("name"),
                         rs.getString("phone"),
                         rs.getString("email"),
                         rs.getString("address"));
 
-                suppliers.add(s);
+                suppliers.add(supplier);
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -57,11 +57,11 @@ public class SupplierDAO {
 
         try(Connection con = DatabaseManager.connect();
             PreparedStatement pstmt = con.prepareStatement(query)){
-            pstmt.setString(1,supplier.getName());
-            pstmt.setString(2,supplier.getEmail());
-            pstmt.setString(3,supplier.getPhone());
-            pstmt.setString(4,supplier.getAddress());
-            pstmt.setInt(5,supplier.getId());
+            pstmt.setString(1, supplier.getName());
+            pstmt.setString(2, supplier.getPhone());
+            pstmt.setString(3, supplier.getEmail());
+            pstmt.setString(4, supplier.getAddress());
+            pstmt.setInt(5, supplier.getId());
 
             return pstmt.executeUpdate() > 0;
         }catch (SQLException e){
