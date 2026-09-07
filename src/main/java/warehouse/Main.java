@@ -7,7 +7,7 @@ import warehouse.model.Product;
 
 
 public class Main {
-    static void main() {
+    public static void main(String[] args) {
         InventoryManager manager = new InventoryManager();
         SupplierManager supplierManager = new SupplierManager();
         EmployeeManager employeeManager = new EmployeeManager();
