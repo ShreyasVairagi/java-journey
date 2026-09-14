@@ -1,4 +1,4 @@
-package expensetraker;
+package practice;
 
 import java.util.ArrayList;
 import java.util.Scanner;

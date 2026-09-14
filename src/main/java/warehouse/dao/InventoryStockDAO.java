@@ -15,8 +15,8 @@ import java.util.List;
 public class InventoryStockDAO {
 
     public boolean addProductToLocation(int productId, String locationId, int quantity) {
-        String sql = "INSERT INTO inventory_stock (product_id, locationid, quantity) VALUES (?, ?, ?) " +
-                "ON CONFLICT (product_id, locationid) DO UPDATE SET quantity = inventory_stock.quantity + ?";
+        String sql = "INSERT INTO product_location (product_id, locationid, quantity) VALUES (?, ?, ?) " +
+                "ON CONFLICT (product_id, locationid) DO UPDATE SET quantity = product_location.quantity + ?";
 
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

@@ -12,6 +12,10 @@ import java.util.List;
 public class InventoryManager {
     Utility util = new Utility();
 
+    public int addNum(int num1, int num2){
+        return num1 + num2;
+    }
+
     public void addProduct(){
         ProductDAO productDAO = new ProductDAO();
         SupplierDAO supplierDAO = new SupplierDAO();
@@ -65,31 +69,30 @@ public class InventoryManager {
     }
 
     //positive number to add or negative number to reduce stock
-    public void adjustStock(Product product, int quantity) {
+    public void adjustStock(Product product, int quantity, int employeeId, String locationId) {
+        //Business
         if (quantity == 0) {
-            System.out.println("Quantity cannot be zero. Stock adjustment cancelled.");
-            return;
+            throw new IllegalArgumentException("Quantity cannot be zero. Stock adjustment cancelled.");
         }
 
-        int employeeId = util.integerValidator("Enter your employee id");
-
+        //Persistence
         EmployeeDAO employeeDAO = new EmployeeDAO();
         Employee employee = employeeDAO.findSingleEmployee(employeeId);
 
         if (employee == null) {
-            System.out.println("Employee not found! Stock adjustment cancelled.");
-            return;
+            throw new IllegalArgumentException("Employee not found! Stock adjustment cancelled.");
         }
 
-        // --- NEW: Check if the product actually exists before doing anything ---
+        // Check if the product actually exists before doing anything
         ProductDAO productDAO = new ProductDAO();
         Product existingProduct = productDAO.findSingleProduct(product.getId());
         if (existingProduct == null) {
-            System.out.println("Error: Product with ID " + product.getId() + " does not exist. Stock adjustment cancelled.");
-            return;
+            throw new IllegalArgumentException("Error: Product with ID " + product.getId() + " does not exist. Stock adjustment cancelled.");
         }
 
+        //Object creation
         InventoryStockDAO inventoryStockDAO = new InventoryStockDAO();
+        //Business
         List<InventoryStock> existingQuantities = inventoryStockDAO.findStockForProduct(product);
 
         // Validate removal request early if quantity is negative
@@ -101,9 +104,9 @@ public class InventoryManager {
 
             int requestedRemoval = Math.abs(quantity);
             if (totalAvailableStock < requestedRemoval) {
-                System.out.println("Error: Cannot remove " + requestedRemoval + " items. Total available stock across all locations is only " + totalAvailableStock + ". Adjustment cancelled.");
-                return;
+                throw new IllegalArgumentException("Error: Cannot remove " + requestedRemoval + " items. Total available stock across all locations is only " + totalAvailableStock + ". Adjustment cancelled.");
             }
+
         }
 
         // Handle positive value (Adding stock)
@@ -112,19 +115,19 @@ public class InventoryManager {
 
             // If the product has no locations yet
             if (existingQuantities.isEmpty()) {
-                while (userQuantity > 0) {
-                    String newLocationId;
-                    while (true) {
-                        newLocationId = util.emptyStringValidator("Product has no assigned stock. Enter storage location ID for the " + userQuantity + " items: ");
-                        if (inventoryStockDAO.locationExists(newLocationId)) {
-                            break;
-                        }
-                        System.out.println("Error: Location ID does not exist in the warehouse. Please enter a valid location.");
-                    }
 
+                if (locationId == null || locationId.trim().isEmpty()) {
+                    throw new IllegalArgumentException("Error: Location ID is required for new stock. Adjustment cancelled.");
+                }
+
+                while (userQuantity > 0) {
                     int amountForThisBin = Math.min(100, userQuantity);
-                    inventoryStockDAO.addProductToLocation(product.getId(), newLocationId, amountForThisBin);
-                    userQuantity -= amountForThisBin;
+                    try {
+                        inventoryStockDAO.addProductToLocation(product.getId(), locationId, amountForThisBin);
+                        userQuantity -= amountForThisBin;
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Error adding product to location: " + e.getMessage());
+                    }
                 }
             } else {
                 // Fill up existing bins
@@ -146,24 +149,27 @@ public class InventoryManager {
                 }
 
                 // Handle overflow with location validation
-                while (userQuantity > 0) {
-                    String newLocationId;
-                    while (true) {
-                        newLocationId = util.emptyStringValidator("Existing locations are full. Enter new storage location ID for the remaining " + userQuantity + " items: ");
-                        if (inventoryStockDAO.locationExists(newLocationId)) {
-                            break;
-                        }
-                        System.out.println("Error: Location ID does not exist in the warehouse. Please enter a valid location.");
+                if (userQuantity > 0) {
+                    // If Main didn't give us a location yet, throw the exception to ask for one
+                    if (locationId == null || locationId.trim().isEmpty()) {
+                        throw new IllegalStateException("OVERFLOW_LOCATION_REQUIRED:" + userQuantity);
                     }
 
-                    int amountForThisBin = Math.min(100, userQuantity);
-                    inventoryStockDAO.addProductToLocation(product.getId(), newLocationId, amountForThisBin);
-                    userQuantity -= amountForThisBin;
+                    // If Main DID give us a location, use it to save the remaining items!
+                    while (userQuantity > 0) {
+                        int amountForThisBin = Math.min(100, userQuantity);
+                        boolean success = inventoryStockDAO.addProductToLocation(product.getId(), locationId, amountForThisBin);
+                        if (!success) {
+                            throw new IllegalArgumentException("Adjustment cancelled due to database error during overflow.");
+                        }
+                        userQuantity -= amountForThisBin;
+                    }
                 }
             }
         }
 
         // Handle negative value (Reducing stock)
+        //buisness
         else {
             int inputConvertion = Math.abs(quantity);
 
@@ -188,13 +194,12 @@ public class InventoryManager {
         }
 
         // Record transaction
+        //wrong responsibility?
         TransactionType type = (quantity > 0) ? TransactionType.IN : TransactionType.OUT;
         int transactionQuantity = Math.abs(quantity);
         Transaction transaction = new Transaction(product, employee, transactionQuantity, type, LocalDate.now(), LocalTime.now());
         TransactionDAO transactionDAO = new TransactionDAO();
         transactionDAO.add(transaction);
-
-        System.out.println("Stock adjusted successfully!");
     }
 
     public void moveProduct(Product product, int quantity) {

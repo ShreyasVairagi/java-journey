@@ -1,4 +1,4 @@
-package studentmanagment;
+package practice;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -118,7 +118,7 @@ class Student{
 
 
     void printInfo(){
-        System.out.println("1. studentmanagment.Student Id: " + this.studentId + "\n" +
+        System.out.println("1. practice.Student Id: " + this.studentId + "\n" +
                             "2. Firstname: " + this.firstname +   "\n" +
                             "3. Lastname: "  +  this.lastname + "\n" +
                             "4. Age: " + this.age + "\n"+
@@ -141,13 +141,13 @@ public class StudentManagement {
                 "     STUDENT MANAGEMENT SYSTEM\n" +
                 "=================================\n" +
                 "\n" +
-                "1. Add studentmanagment.Student\n" +
+                "1. Add practice.Student\n" +
                 "2. View All Students\n" +
-                "3. Search studentmanagment.Student\n" +
-                "4. Update studentmanagment.Student\n" +
-                "5. Delete studentmanagment.Student\n" +
+                "3. Search practice.Student\n" +
+                "4. Update practice.Student\n" +
+                "5. Delete practice.Student\n" +
                 "6. Add Marks\n" +
-                "7. View studentmanagment.Student Report\n" +
+                "7. View practice.Student Report\n" +
                 "8. Short Students\n" +
                 "9. Exit");
 
@@ -169,16 +169,16 @@ public class StudentManagement {
             }
         }
         int id = randomId;
-        System.out.println("Enter studentmanagment.Student First Name:");
+        System.out.println("Enter practice.Student First Name:");
         String firstname = scannerObj.nextLine();
-        System.out.println("Enter studentmanagment.Student Last Name:");
+        System.out.println("Enter practice.Student Last Name:");
         String lastname = scannerObj.nextLine();
-        System.out.println("Enter studentmanagment.Student Age:");
+        System.out.println("Enter practice.Student Age:");
         String entersAge = scannerObj.nextLine();
         int age = Integer.parseInt(entersAge); // add try catch
-        System.out.println("Enter studentmanagment.Student Course:");
+        System.out.println("Enter practice.Student Course:");
         String course = scannerObj.nextLine();
-        System.out.println("Enter studentmanagment.Student Email:");
+        System.out.println("Enter practice.Student Email:");
         String email = scannerObj.nextLine();
         Student studentObj = new Student(id, firstname, lastname, age,course,email);
         Students.add(studentObj);
@@ -215,24 +215,24 @@ public class StudentManagement {
 
                 switch (userSelect){
                     case 1:
-                        System.out.println("Enter studentmanagment.Student's new Name: ");
+                        System.out.println("Enter practice.Student's new Name: ");
                         i.setFirstname(scannerObj.nextLine());
                         break;
                     case 2:
-                        System.out.println("Enter studentmanagment.Student's new Surname: ");
+                        System.out.println("Enter practice.Student's new Surname: ");
                         i.setLastname(scannerObj.nextLine());
                         break;
                     case 3:
-                        System.out.println("Enter studentmanagment.Student's new Age: ");
+                        System.out.println("Enter practice.Student's new Age: ");
                         String entersAge = scannerObj.nextLine();
                         i.setAge(Integer.parseInt(entersAge));
                         break;
                     case 4:
-                        System.out.println("Enter studentmanagment.Student's new course: ");
+                        System.out.println("Enter practice.Student's new course: ");
                         i.setCourse(scannerObj.nextLine());
                         break;
                     case 5:
-                        System.out.println("Enter studentmanagment.Student's new Email: ");
+                        System.out.println("Enter practice.Student's new Email: ");
                         i.setEmail(scannerObj.nextLine());
                         break;
                     default:
@@ -253,7 +253,7 @@ public class StudentManagement {
             if (i.getStudentId() == id){
                 Students.remove(i);
                 found = true;
-                System.out.println("studentmanagment.Student deleted successfully.");
+                System.out.println("practice.Student deleted successfully.");
                 break;
             }
         }
@@ -264,9 +264,9 @@ public class StudentManagement {
     }
 
     public void addMarks(int id){
-        System.out.println("Enter studentmanagment.Subject's Name: ");
+        System.out.println("Enter practice.Subject's Name: ");
         String subject = scannerObj.nextLine();
-        System.out.println("Enter studentmanagment.Subject's mark: ");
+        System.out.println("Enter practice.Subject's mark: ");
         String markInput = scannerObj.nextLine();
         int mark = Integer.parseInt(markInput);
         boolean found = false;
@@ -289,7 +289,7 @@ public class StudentManagement {
         for (Student i : Students){
             if (i.getStudentId() == id){
                 System.out.println("=================================\n" +
-                        "     studentmanagment.Student Report\n" +
+                        "     practice.Student Report\n" +
                         "=================================\n" +
                         "\n" +
                         "Name: \n" + i.getFirstname() + " "+ i.getLastname() + "\n" + "\n" +
@@ -318,7 +318,7 @@ public class StudentManagement {
         System.out.println("How do u wanna short students?"  + "\n" +
                 "1. By their name?"  + "\n" +
                 "2. By their Average mark?" + "\n" +
-                "3. studentmanagment.Student ID?");
+                "3. practice.Student ID?");
         String userInput = scannerObj.nextLine();
         int input = Integer.parseInt(userInput);
         switch (input) {
@@ -341,7 +341,7 @@ public class StudentManagement {
 
 
     public int userInput(){
-        System.out.println("Enter studentmanagment.Student's Id: ");
+        System.out.println("Enter practice.Student's Id: ");
         String input = scannerObj.nextLine();
         return Integer.parseInt(input);
     }

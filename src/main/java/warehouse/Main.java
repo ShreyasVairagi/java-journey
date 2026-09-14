@@ -1,9 +1,13 @@
 package warehouse;
 
+import warehouse.dao.InventoryStockDAO;
 import warehouse.managers.EmployeeManager;
 import warehouse.managers.InventoryManager;
 import warehouse.managers.SupplierManager;
+import warehouse.model.InventoryStock;
 import warehouse.model.Product;
+
+import java.util.List;
 
 
 public class Main {
@@ -76,9 +80,56 @@ public class Main {
                                 manager.viewStockForProduct(new Product(viewPId));
                                 break;
                             case 2:
+                                int employeeId = util.integerValidator("Enter your employee id");
                                 int pId = util.integerValidator("Enter Product ID");
                                 int qty = util.integerValidator("Enter quantity adjustment (+ to add, - to reduce)");
-                                manager.adjustStock(new Product(pId), qty);
+
+                                Product product = new Product(pId);
+                                InventoryStockDAO inventoryStockDAO = new InventoryStockDAO();
+                                List<InventoryStock> existingQuantities = inventoryStockDAO.findStockForProduct(product);
+
+                                String locationId = null;
+
+                                // 1. If it has no locations initially
+                                if (existingQuantities.isEmpty() && qty > 0) {
+                                    System.out.println("Product has no assigned stock locations.");
+                                    while (true) {
+                                        locationId = util.emptyStringValidator("Enter storage location ID for these items: ");
+                                        if (inventoryStockDAO.locationExists(locationId)) {
+                                            break;
+                                        }
+                                        System.out.println("Error: Location ID does not exist. Please try again.");
+                                    }
+                                }
+
+                                while (true) {
+                                    try {
+                                        manager.adjustStock(product, qty, employeeId, locationId);
+                                        System.out.println("Stock adjusted successfully!");
+                                        break;
+                                    } catch (IllegalStateException e) {
+                                        // Handle overflow
+                                        if (e.getMessage().startsWith("OVERFLOW_LOCATION_REQUIRED")) {
+                                            System.out.println("Existing locations are full! Additional storage location needed.");
+
+                                            // Ask the user for the new overflow location
+                                            while (true) {
+                                                locationId = util.emptyStringValidator("Enter new storage location ID for remaining items: ");
+                                                if (inventoryStockDAO.locationExists(locationId)) {
+                                                    break;
+                                                }
+                                                System.out.println("Error: Location ID does not exist. Please try again.");
+                                            }
+                                        } else {
+                                            // Any other IllegalStateException
+                                            System.out.println("Error: " + e.getMessage());
+                                            break;
+                                        }
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println(e.getMessage());
+                                        break;
+                                    }
+                                }
                                 break;
                             case 3:
                                 int movePId = util.integerValidator("Enter Product ID");
