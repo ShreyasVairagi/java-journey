@@ -155,5 +155,69 @@ public class InventoryStockDAO {
         }
     }
 
+    public int getQuantityForProductAndLocation(int productId, String locationId) {
+        String sql = "SELECT quantity FROM product_location WHERE product_id = ? AND locationid = ?";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, productId);
+            pstmt.setString(2, locationId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("quantity");
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error getting quantity for product and location: " + e.getMessage());
+        }
+
+        return 0;
+    }
+
+    public int getTotalStockAtLocation(String locationId) {
+        String sql = "SELECT COALESCE(SUM(quantity), 0) FROM product_location WHERE locationid = ?";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, locationId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error getting total stock at location: " + e.getMessage());
+        }
+
+        return 0;
+    }
+
+    public int getLocationCapacity(String locationId) {
+        String sql = "SELECT capacity FROM storage_location WHERE locationid = ?";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, locationId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("capacity");
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error getting location capacity: " + e.getMessage());
+        }
+
+        return 0;
+    }
+
 
 }

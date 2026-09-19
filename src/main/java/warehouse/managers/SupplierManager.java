@@ -2,76 +2,54 @@ package warehouse.managers;
 
 import warehouse.dao.SupplierDAO;
 import warehouse.model.Supplier;
-import warehouse.Utility;
 
 public class SupplierManager {
-    Utility util = new Utility();
-    SupplierDAO supplierDAO = new SupplierDAO();
+    private final SupplierDAO supplierDAO;
 
-    public void addSupplier() {
-        String name = util.emptyStringValidator("Enter Name: ");
-        String phone = util.phoneValidator("Enter Phone: ");
-        String email = util.emptyStringValidator("Enter Email: ");
-        String address = util.emptyStringValidator("Enter Address: ");
+    public SupplierManager(SupplierDAO supplierDAO) {
+        this.supplierDAO = supplierDAO;
+    }
 
-        Supplier supplier = new Supplier(name, phone, email, address);
+    public void addSupplier(Supplier supplier) {
+        if (supplier == null) {
+            throw new IllegalArgumentException("Supplier cannot be null.");
+        }
         boolean success = supplierDAO.add(supplier);
-
-        if (success) {
-            System.out.println("Supplier added successfully!");
-        } else {
-            System.out.println("Failed to add supplier.");
+        if (!success) {
+            throw new RuntimeException("Failed to add supplier to the database.");
         }
     }
 
-    public void findSupplier() {
-        int id = util.integerValidator("Enter ID");
-
+    public Supplier findSupplier(int id) {
         Supplier supplier = supplierDAO.findSingleSupplier(id);
-        if (supplier != null) {
-            System.out.println("\nSupplier Details");
-            System.out.println("ID: " + supplier.getId());
-            System.out.println("Name: " + supplier.getName());
-            System.out.println("Phone: " + supplier.getPhone());
-            System.out.println("Email: " + supplier.getEmail());
-            System.out.println("Address: " + supplier.getAddress());
-        } else {
-            System.out.println("Supplier with ID " + id + " not found.");
+        if (supplier == null) {
+            throw new IllegalArgumentException("Supplier with ID " + id + " not found.");
+        }
+        return supplier;
+    }
+
+    public void updateSupplier(Supplier updatedSupplier) {
+        if (updatedSupplier == null) {
+            throw new IllegalArgumentException("Supplier cannot be null.");
+        }
+        Supplier existing = supplierDAO.findSingleSupplier(updatedSupplier.getId());
+        if (existing == null) {
+            throw new IllegalArgumentException("Supplier not found!");
+        }
+        boolean success = supplierDAO.update(updatedSupplier);
+        if (!success) {
+            throw new RuntimeException("Failed to update supplier.");
         }
     }
 
-    public void updateSupplier() {
-        int id = util.integerValidator("Enter ID");
-
+    public void removeSupplier(int id) {
         Supplier existing = supplierDAO.findSingleSupplier(id);
         if (existing == null) {
-            System.out.println("Supplier not found!");
-            return;
+            throw new IllegalArgumentException("Supplier with ID " + id + " not found.");
         }
-
-        String name = util.emptyStringValidator("Enter new Name (current: " + existing.getName() + "): ");
-        String phone = util.phoneValidator("Enter new Phone (current: " + existing.getPhone() + "): ");
-        String email = util.emptyStringValidator("Enter new Email (current: " + existing.getEmail() + "): ");
-        String address = util.emptyStringValidator("Enter new Address (current: " + existing.getAddress() + "): ");
-
-        Supplier updatedSupplier = new Supplier(id, name, phone, email, address);
-        boolean success = supplierDAO.update(updatedSupplier);
-
-        if (success) {
-            System.out.println("Supplier updated successfully!");
-        } else {
-            System.out.println("Failed to update supplier.");
-        }
-    }
-
-    public void removeSupplier() {
-        int id = util.integerValidator("Enter Supplier ID to remove");
-
-        boolean success = supplierDAO.delete(id); // Fixed: actually calling delete on the DAO
-        if (success) {
-            System.out.println("Supplier removed successfully!");
-        } else {
-            System.out.println("Failed to remove supplier.");
+        boolean success = supplierDAO.delete(id);
+        if (!success) {
+            throw new RuntimeException("Failed to remove supplier.");
         }
     }
 }
